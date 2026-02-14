@@ -56,9 +56,14 @@ export default function AddBookmark() {
             setUrl("");
             setTitle("");
             setSummary("");
-        } catch (error) {
-            console.error("Error adding bookmark:", error);
-            alert("Failed to add bookmark. Please try again.");
+        } catch (error: any) {
+            console.error("Error adding bookmark:", {
+                message: error.message,
+                code: error.code,
+                details: error.details,
+                hint: error.hint
+            });
+            alert(`Failed to add bookmark: ${error.message || "Unknown error"}`);
         } finally {
             setIsLoading(false);
         }
@@ -73,13 +78,28 @@ export default function AddBookmark() {
                     <label htmlFor="url" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                         URL
                     </label>
+                    <input
+                        id="url"
+                        type="url"
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                        placeholder="https://example.com"
+                        className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-transparent text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="title" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                        Title
+                    </label>
                     <div className="flex gap-2">
                         <input
-                            id="url"
-                            type="url"
-                            value={url}
-                            onChange={(e) => setUrl(e.target.value)}
-                            placeholder="https://example.com"
+                            id="title"
+                            type="text"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            placeholder="Bookmark Title"
                             className="flex-1 px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-transparent text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
@@ -87,27 +107,12 @@ export default function AddBookmark() {
                             type="button"
                             onClick={handleEnhance}
                             disabled={isEnhancing || !url}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 dark:bg-purple-900/20 dark:text-purple-400 rounded-md hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors disabled:opacity-50"
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 dark:bg-purple-900/20 dark:text-purple-400 rounded-md hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors disabled:opacity-50 whitespace-nowrap"
                         >
                             <Sparkles className="w-4 h-4" />
-                            {isEnhancing ? "Enhancing..." : "Enhance"}
+                            {isEnhancing ? "Generating..." : "Auto-Generate"}
                         </button>
                     </div>
-                </div>
-
-                <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                        Title
-                    </label>
-                    <input
-                        id="title"
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Bookmark Title"
-                        className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-transparent text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
                 </div>
 
                 <div>
