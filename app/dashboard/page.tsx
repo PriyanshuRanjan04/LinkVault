@@ -49,21 +49,7 @@ export default async function Dashboard() {
 
             <main className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
                 <DashboardClient initialBookmarks={bookmarks || []} />
-
-                {/* Diagnostic Overlay */}
-                <div className="mt-8 p-4 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded text-xs font-mono">
-                    <p className="font-bold text-yellow-800 dark:text-yellow-200">SERVER DIAGNOSTICS</p>
-                    <p>Render Time: {new Date().toISOString()}</p>
-                    <p>Bookmark Count: {bookmarks?.length || 0}</p>
-                    <details>
-                        <summary className="cursor-pointer text-yellow-600 dark:text-yellow-400">Raw Data Dump</summary>
-                        <pre className="mt-2 overflow-x-auto p-2 bg-white dark:bg-black rounded border border-yellow-200 dark:border-yellow-800">
-                            {JSON.stringify(bookmarks, null, 2)}
-                        </pre>
-                    </details>
-                </div>
             </main>
         </div>
     );
 }
-
