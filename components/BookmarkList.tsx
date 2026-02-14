@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
 import { Trash2, ExternalLink } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteBookmark } from "@/app/actions";
 
@@ -11,6 +11,7 @@ export default function BookmarkList({ initialBookmarks }: { initialBookmarks: B
     const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks);
     const supabase = useMemo(() => createClient(), []);
     const router = useRouter();
+    const [isPending, startTransition] = useTransition();
 
     // Sync state with props when revalidatePath updates the server component
     useEffect(() => {
@@ -50,22 +51,24 @@ export default function BookmarkList({ initialBookmarks }: { initialBookmarks: B
         };
     }, [supabase]);
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = (id: string) => {
         if (!confirm("Are you sure you want to delete this bookmark?")) return;
 
         // Optimistic update
         setBookmarks((prev) => prev.filter((b) => b.id !== id));
 
-        const result = await deleteBookmark(id);
+        startTransition(async () => {
+            const result = await deleteBookmark(id);
 
-        if (result?.error) {
-            console.error("Error deleting bookmark:", result.error);
-            alert("Failed to delete bookmark");
-            // Revert on error (optional, but good practice)
-            setBookmarks(initialBookmarks);
-        } else {
-            router.refresh();
-        }
+            if (result?.error) {
+                console.error("Error deleting bookmark:", result.error);
+                alert("Failed to delete bookmark");
+                // Revert on error
+                setBookmarks(initialBookmarks);
+            } else {
+                router.refresh();
+            }
+        });
     };
 
     if (bookmarks.length === 0) {

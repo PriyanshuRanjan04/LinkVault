@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Sparkles } from "lucide-react";
 import { addBookmark } from "@/app/actions";
@@ -9,7 +9,7 @@ export default function AddBookmark() {
     const [url, setUrl] = useState("");
     const [title, setTitle] = useState("");
     const [summary, setSummary] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
     const [isEnhancing, setIsEnhancing] = useState(false);
     const router = useRouter();
 
@@ -32,34 +32,33 @@ export default function AddBookmark() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!url || !title) return;
 
-        setIsLoading(true);
-        try {
-            const formData = new FormData();
-            formData.append("url", url);
-            formData.append("title", title);
-            if (summary) formData.append("summary", summary);
+        const formData = new FormData();
+        formData.append("url", url);
+        formData.append("title", title);
+        if (summary) formData.append("summary", summary);
 
-            const result = await addBookmark(formData);
+        startTransition(async () => {
+            try {
+                const result = await addBookmark(formData);
 
-            if (result?.error) {
-                throw new Error(result.error);
+                if (result?.error) {
+                    throw new Error(result.error);
+                }
+
+                // Reset form
+                setUrl("");
+                setTitle("");
+                setSummary("");
+                router.refresh();
+            } catch (error: any) {
+                console.error("Error adding bookmark:", error);
+                alert(`Failed to add bookmark: ${error.message || "Unknown error"}`);
             }
-
-            // Reset form
-            setUrl("");
-            setTitle("");
-            setSummary("");
-            router.refresh();
-        } catch (error: any) {
-            console.error("Error adding bookmark:", error);
-            alert(`Failed to add bookmark: ${error.message || "Unknown error"}`);
-        } finally {
-            setIsLoading(false);
-        }
+        });
     };
 
     return (
@@ -124,11 +123,11 @@ export default function AddBookmark() {
 
                 <button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isPending}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                     <Plus className="w-4 h-4" />
-                    {isLoading ? "Adding..." : "Add Bookmark"}
+                    {isPending ? "Adding..." : "Add Bookmark"}
                 </button>
             </div>
         </form>
