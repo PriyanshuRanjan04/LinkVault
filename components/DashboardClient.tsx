@@ -6,7 +6,7 @@ import AddBookmark from "./AddBookmark";
 import BookmarkList from "./BookmarkList";
 
 export default function DashboardClient({ initialBookmarks }: { initialBookmarks: Bookmark[] }) {
-    const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks);
+    const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks || []);
 
     const handleBookmarkAdded = (newBookmark: Bookmark) => {
         setBookmarks((prev) => [newBookmark, ...prev]);
@@ -17,12 +17,12 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
     };
 
     return (
-        <>
+        <div className="space-y-6">
             <AddBookmark onBookmarkAdded={handleBookmarkAdded} />
             <BookmarkList
                 bookmarks={bookmarks}
                 onBookmarkDeleted={handleBookmarkDeleted}
             />
-        </>
+        </div>
     );
 }

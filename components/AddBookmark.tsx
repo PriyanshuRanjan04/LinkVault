@@ -47,6 +47,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
         startTransition(async () => {
             try {
                 const result = await addBookmark(formData);
+                console.log("[AddBookmark] Server action result:", JSON.stringify(result));
 
                 if (result?.error) {
                     throw new Error(result.error);
@@ -54,7 +55,20 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
 
                 // Immediately update the UI with the returned bookmark data
                 if (result?.data) {
+                    console.log("[AddBookmark] Adding bookmark from server data");
                     onBookmarkAdded(result.data as Bookmark);
+                } else {
+                    // Fallback: construct bookmark from form data if server didn't return it
+                    console.log("[AddBookmark] No data from server, using fallback");
+                    const fallbackBookmark: Bookmark = {
+                        id: crypto.randomUUID(),
+                        created_at: new Date().toISOString(),
+                        user_id: "",
+                        title,
+                        url,
+                        summary: summary || null,
+                    };
+                    onBookmarkAdded(fallbackBookmark);
                 }
 
                 // Reset form
