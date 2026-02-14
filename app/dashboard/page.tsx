@@ -6,7 +6,6 @@ import { LogOut } from "lucide-react";
 export const dynamic = 'force-dynamic'
 
 export default async function Dashboard() {
-    console.log("Server rendered at:", new Date().toISOString());
     const supabase = await createClient();
 
     const {
