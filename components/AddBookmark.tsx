@@ -7,25 +7,18 @@ import { Bookmark } from "@/types/custom";
 
 interface AddBookmarkProps {
     onBookmarkAdded: (bookmark: Bookmark) => void;
-    onLog?: (message: string) => void;
 }
 
-export default function AddBookmark({ onBookmarkAdded, onLog }: AddBookmarkProps) {
+export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
     const [url, setUrl] = useState("");
     const [title, setTitle] = useState("");
     const [summary, setSummary] = useState("");
     const [isPending, startTransition] = useTransition();
     const [isEnhancing, setIsEnhancing] = useState(false);
 
-    const log = (msg: string) => {
-        console.log(msg);
-        if (onLog) onLog(msg);
-    };
-
     const handleEnhance = async () => {
         if (!url) return;
         setIsEnhancing(true);
-        log("Starting AI enhancement...");
         try {
             const response = await fetch("/api/ai-enhance", {
                 method: "POST",
@@ -35,9 +28,7 @@ export default function AddBookmark({ onBookmarkAdded, onLog }: AddBookmarkProps
             const data = await response.json();
             if (data.title) setTitle(data.title);
             if (data.summary) setSummary(data.summary);
-            log("AI enhancement success");
         } catch (error) {
-            log(`AI enhancement error: ${error}`);
             console.error("AI enhancement failed:", error);
         } finally {
             setIsEnhancing(false);
@@ -48,19 +39,15 @@ export default function AddBookmark({ onBookmarkAdded, onLog }: AddBookmarkProps
         e.preventDefault();
         if (!url || !title) return;
 
-        log("Submitting form...");
-
+        // No startTransition needed for client-side only, but keeping it for consistency/pending state
         startTransition(async () => {
             try {
                 const supabase = createClient();
-                log("Supabase client created");
-
                 const { data: { user } } = await supabase.auth.getUser();
 
                 if (!user) {
                     throw new Error("User not authenticated");
                 }
-                log(`User authenticated: ${user.id}`);
 
                 const newBookmarkPayload = {
                     title,
@@ -69,7 +56,6 @@ export default function AddBookmark({ onBookmarkAdded, onLog }: AddBookmarkProps
                     user_id: user.id,
                 };
 
-                log("Inserting bookmark...");
                 const { data, error } = await supabase
                     .from('bookmarks')
                     .insert(newBookmarkPayload)
@@ -77,16 +63,13 @@ export default function AddBookmark({ onBookmarkAdded, onLog }: AddBookmarkProps
                     .single();
 
                 if (error) {
-                    log(`Insert Error: ${error.message} (Code: ${error.code})`);
                     throw error;
                 }
 
                 // Immediately update the UI with the returned bookmark data
                 if (data) {
-                    log("Insert success, data returned");
                     onBookmarkAdded(data as Bookmark);
                 } else {
-                    log("Insert success but NO DATA (Falling back)");
                     // Fallback in case remote returns null but succeeds (unlikely with select())
                     const fallback: Bookmark = {
                         id: crypto.randomUUID(),
@@ -97,12 +80,10 @@ export default function AddBookmark({ onBookmarkAdded, onLog }: AddBookmarkProps
                 }
 
                 // Reset form
-                log("Form reset");
                 setUrl("");
                 setTitle("");
                 setSummary("");
             } catch (error: any) {
-                log(`CRITICAL ERROR: ${error.message}`);
                 console.error("Error adding bookmark:", error);
                 alert(`Failed to add bookmark: ${error.message || "Unknown error"}`);
             }
