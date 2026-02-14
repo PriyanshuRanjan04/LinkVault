@@ -49,42 +49,31 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 throw new Error("User not authenticated");
             }
 
-            // Let DB generate ID and timestamp (or use server timestamp)
+            const newId = crypto.randomUUID();
+            const now = new Date().toISOString();
+
             const newBookmarkPayload = {
+                id: newId,
                 title,
                 url,
                 summary: summary || null,
                 user_id: user.id,
+                created_at: now
             };
 
-            // Attempt insert and select. 
-            // If select fails (RLS), we rely on Realtime.
-            const { data, error } = await supabase
+            // 1. Optimistic Update (Immediate)
+            onBookmarkAdded(newBookmarkPayload as Bookmark);
+            alert("Bookmark added successfully!");
+
+            // 2. Fire and Forget Insert (Backend)
+            const { error } = await supabase
                 .from('bookmarks')
-                .insert(newBookmarkPayload)
-                .select()
-                .single();
+                .insert(newBookmarkPayload);
 
             if (error) {
-                // PGRST116 means the query returned no rows (insert worked, select returned null).
-                // This happens if RLS policy for SELECT is stricter than INSERT, or replication lag.
-                // We assume success and let Realtime update the list.
-                if (error.code === 'PGRST116') {
-                    console.warn("Insert succeeded but select returned no data. Relying on Realtime.");
-                    alert("Bookmark added! (Syncing...)");
-                    setUrl("");
-                    setTitle("");
-                    setSummary("");
-                    return;
-                }
-
                 console.error("Insert error:", error);
-                throw error;
-            }
-
-            if (data) {
-                onBookmarkAdded(data as Bookmark);
-                alert("Bookmark added successfully!");
+                // Ideally rollback, but for now just alert
+                alert("Error syncing bookmark to server. Please refresh.");
             }
 
             // Reset form
