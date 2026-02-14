@@ -1,9 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
 import { Trash2, ExternalLink } from "lucide-react";
-import { useEffect, useMemo, useTransition } from "react";
 
 interface BookmarkListProps {
     bookmarks: Bookmark[];
@@ -12,6 +12,7 @@ interface BookmarkListProps {
 
 export default function BookmarkList({ bookmarks, onBookmarkDeleted }: BookmarkListProps) {
     const supabase = useMemo(() => createClient(), []);
+
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this bookmark?")) return;
 
@@ -23,7 +24,6 @@ export default function BookmarkList({ bookmarks, onBookmarkDeleted }: BookmarkL
         if (error) {
             console.error("Error deleting bookmark:", error);
             alert("Failed to delete bookmark. Please refresh the page.");
-            // Ideally we should rollback the optimistic update here, but for now we prioritize simplicity.
         }
     };
 
