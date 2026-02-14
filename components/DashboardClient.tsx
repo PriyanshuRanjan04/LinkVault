@@ -12,6 +12,7 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
 
     // Sync state with props when server data changes
     useEffect(() => {
+        console.log("DashboardClient: Syncing from props", initialBookmarks?.length);
         setBookmarks(initialBookmarks || []);
     }, [initialBookmarks]);
 
@@ -47,9 +48,13 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
     }, [supabase]);
 
     const handleBookmarkAdded = (newBookmark: Bookmark) => {
+        console.log("DashboardClient: Adding bookmark", newBookmark);
         // Optimistic update for current tab
         setBookmarks((prev) => {
-            if (prev.some((b) => b.id === newBookmark.id)) return prev;
+            if (prev.some((b) => b.id === newBookmark.id)) {
+                console.log("DashboardClient: Duplicate ID blocked", newBookmark.id);
+                return prev;
+            }
             return [newBookmark, ...prev];
         });
     };
@@ -61,6 +66,11 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
 
     return (
         <div className="space-y-6">
+            {/* DEBUG INFO */}
+            <div className="p-2 text-xs bg-red-100 text-red-800 rounded dark:bg-red-900/20 dark:text-red-200">
+                DEBUG: Count = {bookmarks.length} | First ID = {bookmarks[0]?.id?.slice(0, 4)}
+            </div>
+
             <AddBookmark onBookmarkAdded={handleBookmarkAdded} />
             <BookmarkList
                 bookmarks={bookmarks}
