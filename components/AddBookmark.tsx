@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, Sparkles } from "lucide-react";
 import { addBookmark } from "@/app/actions";
 
@@ -10,6 +11,7 @@ export default function AddBookmark() {
     const [summary, setSummary] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false);
+    const router = useRouter();
 
     const handleEnhance = async () => {
         if (!url) return;
@@ -51,6 +53,7 @@ export default function AddBookmark() {
             setUrl("");
             setTitle("");
             setSummary("");
+            router.refresh();
         } catch (error: any) {
             console.error("Error adding bookmark:", error);
             alert(`Failed to add bookmark: ${error.message || "Unknown error"}`);

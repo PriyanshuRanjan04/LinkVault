@@ -3,12 +3,14 @@
 import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
 import { Trash2, ExternalLink } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { deleteBookmark } from "@/app/actions";
 
 export default function BookmarkList({ initialBookmarks }: { initialBookmarks: Bookmark[] }) {
     const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks);
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
+    const router = useRouter();
 
     // Sync state with props when revalidatePath updates the server component
     useEffect(() => {
@@ -61,6 +63,8 @@ export default function BookmarkList({ initialBookmarks }: { initialBookmarks: B
             alert("Failed to delete bookmark");
             // Revert on error (optional, but good practice)
             setBookmarks(initialBookmarks);
+        } else {
+            router.refresh();
         }
     };
 
