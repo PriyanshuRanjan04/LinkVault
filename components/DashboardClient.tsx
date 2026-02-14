@@ -11,10 +11,10 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
     const supabase = useMemo(() => createClient(), []);
 
     // Sync state with props when server data changes
-    useEffect(() => {
-        console.log("DashboardClient: Syncing from props", initialBookmarks?.length);
-        setBookmarks(initialBookmarks || []);
-    }, [initialBookmarks]);
+    // useEffect(() => {
+    //     console.log("DashboardClient: Syncing from props", initialBookmarks?.length);
+    //     setBookmarks(initialBookmarks || []);
+    // }, [initialBookmarks]);
 
     // Realtime subscription for Multi-Tab Sync
     useEffect(() => {
