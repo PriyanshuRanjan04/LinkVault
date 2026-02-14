@@ -1,8 +1,8 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
+import { addBookmark } from "@/app/actions";
 
 export default function AddBookmark() {
     const [url, setUrl] = useState("");
@@ -10,7 +10,6 @@ export default function AddBookmark() {
     const [summary, setSummary] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false);
-    const supabase = createClient();
 
     const handleEnhance = async () => {
         if (!url) return;
@@ -37,32 +36,23 @@ export default function AddBookmark() {
 
         setIsLoading(true);
         try {
-            const { data: { user } } = await supabase.auth.getUser();
+            const formData = new FormData();
+            formData.append("url", url);
+            formData.append("title", title);
+            if (summary) formData.append("summary", summary);
 
-            if (!user) {
-                throw new Error("User not authenticated");
+            const result = await addBookmark(formData);
+
+            if (result?.error) {
+                throw new Error(result.error);
             }
-
-            const { error } = await supabase.from("bookmarks").insert({
-                title,
-                url,
-                summary: summary || null,
-                user_id: user.id
-            });
-
-            if (error) throw error;
 
             // Reset form
             setUrl("");
             setTitle("");
             setSummary("");
         } catch (error: any) {
-            console.error("Error adding bookmark:", {
-                message: error.message,
-                code: error.code,
-                details: error.details,
-                hint: error.hint
-            });
+            console.error("Error adding bookmark:", error);
             alert(`Failed to add bookmark: ${error.message || "Unknown error"}`);
         } finally {
             setIsLoading(false);

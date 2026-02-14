@@ -4,10 +4,16 @@ import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
 import { Trash2, ExternalLink } from "lucide-react";
 import { useEffect, useState } from "react";
+import { deleteBookmark } from "@/app/actions";
 
 export default function BookmarkList({ initialBookmarks }: { initialBookmarks: Bookmark[] }) {
     const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks);
     const supabase = createClient();
+
+    // Sync state with props when revalidatePath updates the server component
+    useEffect(() => {
+        setBookmarks(initialBookmarks);
+    }, [initialBookmarks]);
 
     useEffect(() => {
         // Set up Realtime subscription
@@ -22,7 +28,10 @@ export default function BookmarkList({ initialBookmarks }: { initialBookmarks: B
                 },
                 (payload) => {
                     if (payload.eventType === "INSERT") {
-                        setBookmarks((prev) => [payload.new as Bookmark, ...prev]);
+                        setBookmarks((prev) => {
+                            if (prev.find(b => b.id === payload.new.id)) return prev;
+                            return [payload.new as Bookmark, ...prev];
+                        });
                     } else if (payload.eventType === "DELETE") {
                         setBookmarks((prev) => prev.filter((b) => b.id !== payload.old.id));
                     } else if (payload.eventType === "UPDATE") {
@@ -42,10 +51,16 @@ export default function BookmarkList({ initialBookmarks }: { initialBookmarks: B
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this bookmark?")) return;
 
-        const { error } = await supabase.from("bookmarks").delete().eq("id", id);
-        if (error) {
-            console.error("Error deleting bookmark:", error);
+        // Optimistic update
+        setBookmarks((prev) => prev.filter((b) => b.id !== id));
+
+        const result = await deleteBookmark(id);
+
+        if (result?.error) {
+            console.error("Error deleting bookmark:", result.error);
             alert("Failed to delete bookmark");
+            // Revert on error (optional, but good practice)
+            setBookmarks(initialBookmarks);
         }
     };
 
