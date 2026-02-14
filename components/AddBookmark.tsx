@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
@@ -13,7 +13,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
     const [url, setUrl] = useState("");
     const [title, setTitle] = useState("");
     const [summary, setSummary] = useState("");
-    const [isPending, startTransition] = useTransition();
+    const [isSubmitting, setIsSubmitting] = useState(false); // Replaces isPending
     const [isEnhancing, setIsEnhancing] = useState(false);
 
     const handleEnhance = async () => {
@@ -35,59 +35,62 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!url || !title) return;
 
-        // No startTransition needed for client-side only, but keeping it for consistency/pending state
-        startTransition(async () => {
-            try {
-                const supabase = createClient();
-                const { data: { user } } = await supabase.auth.getUser();
+        setIsSubmitting(true);
 
-                if (!user) {
-                    throw new Error("User not authenticated");
-                }
+        try {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
 
-                const newBookmarkPayload = {
-                    title,
-                    url,
-                    summary: summary || null,
-                    user_id: user.id,
-                };
-
-                const { data, error } = await supabase
-                    .from('bookmarks')
-                    .insert(newBookmarkPayload)
-                    .select()
-                    .single();
-
-                if (error) {
-                    throw error;
-                }
-
-                // Immediately update the UI with the returned bookmark data
-                if (data) {
-                    onBookmarkAdded(data as Bookmark);
-                } else {
-                    // Fallback in case remote returns null but succeeds (unlikely with select())
-                    const fallback: Bookmark = {
-                        id: crypto.randomUUID(),
-                        created_at: new Date().toISOString(),
-                        ...newBookmarkPayload
-                    };
-                    onBookmarkAdded(fallback);
-                }
-
-                // Reset form
-                setUrl("");
-                setTitle("");
-                setSummary("");
-            } catch (error: any) {
-                console.error("Error adding bookmark:", error);
-                alert(`Failed to add bookmark: ${error.message || "Unknown error"}`);
+            if (!user) {
+                throw new Error("User not authenticated");
             }
-        });
+
+            const newBookmarkPayload = {
+                title,
+                url,
+                summary: summary || null,
+                user_id: user.id,
+            };
+
+            const { data, error } = await supabase
+                .from('bookmarks')
+                .insert(newBookmarkPayload)
+                .select()
+                .single();
+
+            if (error) {
+                throw error;
+            }
+
+            // Immediately update the UI with the returned bookmark data
+            if (data) {
+                onBookmarkAdded(data as Bookmark);
+                // Explicit success feedback for user verification
+                alert("Bookmark added successfully!");
+            } else {
+                // Fallback in case remote returns null but succeeds (unlikely with select())
+                const fallback: Bookmark = {
+                    id: crypto.randomUUID(),
+                    created_at: new Date().toISOString(),
+                    ...newBookmarkPayload
+                };
+                onBookmarkAdded(fallback);
+            }
+
+            // Reset form
+            setUrl("");
+            setTitle("");
+            setSummary("");
+        } catch (error: any) {
+            console.error("Error adding bookmark:", error);
+            alert(`Failed to add bookmark: ${error.message || "Unknown error"}`);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -152,11 +155,11 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
 
                 <button
                     type="submit"
-                    disabled={isPending}
+                    disabled={isSubmitting}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                     <Plus className="w-4 h-4" />
-                    {isPending ? "Adding..." : "Add Bookmark"}
+                    {isSubmitting ? "Adding..." : "Add Bookmark"}
                 </button>
             </div>
         </form>
