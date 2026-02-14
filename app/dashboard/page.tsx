@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import AddBookmark from "@/components/AddBookmark";
-import BookmarkList from "@/components/BookmarkList";
+import DashboardClient from "@/components/DashboardClient";
 import { redirect } from "next/navigation";
 import { LogOut } from "lucide-react";
 
@@ -49,9 +48,9 @@ export default async function Dashboard() {
             </nav>
 
             <main className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-                <AddBookmark />
-                <BookmarkList initialBookmarks={bookmarks || []} />
+                <DashboardClient initialBookmarks={bookmarks || []} />
             </main>
         </div>
     );
 }
+

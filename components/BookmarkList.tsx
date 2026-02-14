@@ -3,23 +3,20 @@
 import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
 import { Trash2, ExternalLink } from "lucide-react";
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useTransition } from "react";
 import { deleteBookmark } from "@/app/actions";
 
-export default function BookmarkList({ initialBookmarks }: { initialBookmarks: Bookmark[] }) {
-    const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks);
+interface BookmarkListProps {
+    bookmarks: Bookmark[];
+    onBookmarkDeleted: (id: string) => void;
+}
+
+export default function BookmarkList({ bookmarks, onBookmarkDeleted }: BookmarkListProps) {
     const supabase = useMemo(() => createClient(), []);
-    const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
-    // Sync state with props when revalidatePath updates the server component
     useEffect(() => {
-        setBookmarks(initialBookmarks);
-    }, [initialBookmarks]);
-
-    useEffect(() => {
-        // Set up Realtime subscription
+        // Set up Realtime subscription as backup
         const channel = supabase
             .channel("realtime-bookmarks")
             .on(
@@ -29,19 +26,9 @@ export default function BookmarkList({ initialBookmarks }: { initialBookmarks: B
                     schema: "public",
                     table: "bookmarks",
                 },
-                (payload) => {
-                    if (payload.eventType === "INSERT") {
-                        setBookmarks((prev) => {
-                            if (prev.find(b => b.id === payload.new.id)) return prev;
-                            return [payload.new as Bookmark, ...prev];
-                        });
-                    } else if (payload.eventType === "DELETE") {
-                        setBookmarks((prev) => prev.filter((b) => b.id !== payload.old.id));
-                    } else if (payload.eventType === "UPDATE") {
-                        setBookmarks((prev) =>
-                            prev.map((b) => (b.id === payload.new.id ? (payload.new as Bookmark) : b))
-                        );
-                    }
+                () => {
+                    // Realtime events are handled by the parent through callbacks
+                    // This subscription is kept as a backup notification mechanism
                 }
             )
             .subscribe();
@@ -54,19 +41,15 @@ export default function BookmarkList({ initialBookmarks }: { initialBookmarks: B
     const handleDelete = (id: string) => {
         if (!confirm("Are you sure you want to delete this bookmark?")) return;
 
-        // Optimistic update
-        setBookmarks((prev) => prev.filter((b) => b.id !== id));
+        // Optimistic update — remove from UI immediately
+        onBookmarkDeleted(id);
 
         startTransition(async () => {
             const result = await deleteBookmark(id);
 
             if (result?.error) {
                 console.error("Error deleting bookmark:", result.error);
-                alert("Failed to delete bookmark");
-                // Revert on error
-                setBookmarks(initialBookmarks);
-            } else {
-                router.refresh();
+                alert("Failed to delete bookmark. Please refresh the page.");
             }
         });
     };

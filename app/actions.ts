@@ -22,12 +22,12 @@ export async function addBookmark(formData: FormData) {
         return { error: 'Msg: User not authenticated' }
     }
 
-    const { error } = await supabase.from('bookmarks').insert({
+    const { data, error } = await supabase.from('bookmarks').insert({
         title,
         url,
         summary: summary || null,
         user_id: user.id,
-    })
+    }).select().single()
 
     if (error) {
         console.error('Error adding bookmark:', error)
@@ -35,7 +35,7 @@ export async function addBookmark(formData: FormData) {
     }
 
     revalidatePath('/dashboard')
-    return { success: true }
+    return { success: true, data }
 }
 
 export async function deleteBookmark(id: string) {
