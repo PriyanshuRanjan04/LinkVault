@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Plus, Sparkles } from "lucide-react";
-import { addBookmark } from "@/app/actions";
+import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
 
 interface AddBookmarkProps {
@@ -39,36 +39,43 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
         e.preventDefault();
         if (!url || !title) return;
 
-        const formData = new FormData();
-        formData.append("url", url);
-        formData.append("title", title);
-        if (summary) formData.append("summary", summary);
-
         startTransition(async () => {
             try {
-                const result = await addBookmark(formData);
-                console.log("[AddBookmark] Server action result:", JSON.stringify(result));
+                const supabase = createClient();
+                const { data: { user } } = await supabase.auth.getUser();
 
-                if (result?.error) {
-                    throw new Error(result.error);
+                if (!user) {
+                    throw new Error("User not authenticated");
+                }
+
+                const newBookmarkPayload = {
+                    title,
+                    url,
+                    summary: summary || null,
+                    user_id: user.id,
+                };
+
+                const { data, error } = await supabase
+                    .from('bookmarks')
+                    .insert(newBookmarkPayload)
+                    .select()
+                    .single();
+
+                if (error) {
+                    throw error;
                 }
 
                 // Immediately update the UI with the returned bookmark data
-                if (result?.data) {
-                    console.log("[AddBookmark] Adding bookmark from server data");
-                    onBookmarkAdded(result.data as Bookmark);
+                if (data) {
+                    onBookmarkAdded(data as Bookmark);
                 } else {
-                    // Fallback: construct bookmark from form data if server didn't return it
-                    console.log("[AddBookmark] No data from server, using fallback");
-                    const fallbackBookmark: Bookmark = {
+                    // Fallback in case remote returns null but succeeds (unlikely with select())
+                    const fallback: Bookmark = {
                         id: crypto.randomUUID(),
                         created_at: new Date().toISOString(),
-                        user_id: "",
-                        title,
-                        url,
-                        summary: summary || null,
+                        ...newBookmarkPayload
                     };
-                    onBookmarkAdded(fallbackBookmark);
+                    onBookmarkAdded(fallback);
                 }
 
                 // Reset form

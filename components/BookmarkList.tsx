@@ -4,7 +4,6 @@ import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
 import { Trash2, ExternalLink } from "lucide-react";
 import { useEffect, useMemo, useTransition } from "react";
-import { deleteBookmark } from "@/app/actions";
 
 interface BookmarkListProps {
     bookmarks: Bookmark[];
@@ -45,10 +44,10 @@ export default function BookmarkList({ bookmarks, onBookmarkDeleted }: BookmarkL
         onBookmarkDeleted(id);
 
         startTransition(async () => {
-            const result = await deleteBookmark(id);
+            const { error } = await supabase.from('bookmarks').delete().eq('id', id);
 
-            if (result?.error) {
-                console.error("Error deleting bookmark:", result.error);
+            if (error) {
+                console.error("Error deleting bookmark:", error);
                 alert("Failed to delete bookmark. Please refresh the page.");
             }
         });
