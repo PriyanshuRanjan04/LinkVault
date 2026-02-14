@@ -49,37 +49,30 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 throw new Error("User not authenticated");
             }
 
+            const newId = crypto.randomUUID();
+            const now = new Date().toISOString();
+
             const newBookmarkPayload = {
+                id: newId,
                 title,
                 url,
                 summary: summary || null,
                 user_id: user.id,
+                created_at: now
             };
 
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('bookmarks')
-                .insert(newBookmarkPayload)
-                .select()
-                .single();
+                .insert(newBookmarkPayload);
 
             if (error) {
                 throw error;
             }
 
-            // Immediately update the UI with the returned bookmark data
-            if (data) {
-                onBookmarkAdded(data as Bookmark);
-                // Explicit success feedback for user verification
-                alert("Bookmark added successfully!");
-            } else {
-                // Fallback in case remote returns null but succeeds (unlikely with select())
-                const fallback: Bookmark = {
-                    id: crypto.randomUUID(),
-                    created_at: new Date().toISOString(),
-                    ...newBookmarkPayload
-                };
-                onBookmarkAdded(fallback);
-            }
+            // Successfully inserted (or at least sent)
+            onBookmarkAdded(newBookmarkPayload as Bookmark);
+            // Explicit success feedback for user verification
+            alert("Bookmark added successfully!");
 
             // Reset form
             setUrl("");

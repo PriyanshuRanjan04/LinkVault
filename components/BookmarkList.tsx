@@ -12,45 +12,19 @@ interface BookmarkListProps {
 
 export default function BookmarkList({ bookmarks, onBookmarkDeleted }: BookmarkListProps) {
     const supabase = useMemo(() => createClient(), []);
-    const [isPending, startTransition] = useTransition();
-
-    useEffect(() => {
-        // Set up Realtime subscription as backup
-        const channel = supabase
-            .channel("realtime-bookmarks")
-            .on(
-                "postgres_changes",
-                {
-                    event: "*",
-                    schema: "public",
-                    table: "bookmarks",
-                },
-                () => {
-                    // Realtime events are handled by the parent through callbacks
-                    // This subscription is kept as a backup notification mechanism
-                }
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }, [supabase]);
-
-    const handleDelete = (id: string) => {
+    const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this bookmark?")) return;
 
         // Optimistic update — remove from UI immediately
         onBookmarkDeleted(id);
 
-        startTransition(async () => {
-            const { error } = await supabase.from('bookmarks').delete().eq('id', id);
+        const { error } = await supabase.from('bookmarks').delete().eq('id', id);
 
-            if (error) {
-                console.error("Error deleting bookmark:", error);
-                alert("Failed to delete bookmark. Please refresh the page.");
-            }
-        });
+        if (error) {
+            console.error("Error deleting bookmark:", error);
+            alert("Failed to delete bookmark. Please refresh the page.");
+            // Ideally we should rollback the optimistic update here, but for now we prioritize simplicity.
+        }
     };
 
     if (bookmarks.length === 0) {
