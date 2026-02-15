@@ -310,12 +310,19 @@ export default async function Home() {
               </h4>
               <ul className="space-y-2 text-sm text-zinc-500">
                 <li>
-                  <Link
-                    href="/login"
-                    className="hover:text-white transition-colors"
+                  <button
+                    onClick={async () => {
+                      const { createClient } = await import("@/lib/supabase/client");
+                      const supabase = createClient();
+                      await supabase.auth.signInWithOAuth({
+                        provider: "google",
+                        options: { redirectTo: `${window.location.origin}/auth/callback` },
+                      });
+                    }}
+                    className="hover:text-white transition-colors text-left"
                   >
                     Sign In
-                  </Link>
+                  </button>
                 </li>
                 <li>
                   <span className="cursor-default">Pricing</span>
