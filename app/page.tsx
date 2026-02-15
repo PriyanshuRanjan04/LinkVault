@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import AnimatedCounter from "@/components/AnimatedCounter";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 /* ── Static data ───────────────────────────────────────── */
 
@@ -98,7 +100,16 @@ const faqs = [
 
 /* ── Page ───────────────────────────────────────────────── */
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="relative flex flex-col overflow-hidden">
       {/* ── Animated gradient background ─────────────────── */}
