@@ -47,12 +47,12 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
         <div className="space-y-6">
             {/* DEBUG INFO */}
             <div className="p-4 bg-yellow-100 dark:bg-yellow-900/20 rounded">
-                <p className="text-sm">Bookmarks in state: {bookmarks.length}</p>
-                <button
+                <p className="text-sm font-bold">DEBUG: Bookmarks in state: {bookmarks.length}</p>
+                <button 
                     onClick={testAddBookmark}
-                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 font-bold"
                 >
-                    🧪 TEST: Add Fake Bookmark (bypasses form)
+                    🧪 TEST BUTTON - Click Me!
                 </button>
             </div>
 
