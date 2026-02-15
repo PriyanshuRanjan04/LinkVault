@@ -18,6 +18,7 @@ import AnimatedCounter from "@/components/AnimatedCounter";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import GetStartedButton from "@/components/GetStartedButton";
+import FooterLoginButton from "@/components/FooterLoginButton";
 
 /* ── Static data ───────────────────────────────────────── */
 
@@ -310,19 +311,7 @@ export default async function Home() {
               </h4>
               <ul className="space-y-2 text-sm text-zinc-500">
                 <li>
-                  <button
-                    onClick={async () => {
-                      const { createClient } = await import("@/lib/supabase/client");
-                      const supabase = createClient();
-                      await supabase.auth.signInWithOAuth({
-                        provider: "google",
-                        options: { redirectTo: `${window.location.origin}/auth/callback` },
-                      });
-                    }}
-                    className="hover:text-white transition-colors text-left"
-                  >
-                    Sign In
-                  </button>
+                  <FooterLoginButton />
                 </li>
                 <li>
                   <span className="cursor-default">Pricing</span>
