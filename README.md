@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LinkVault
 
-## Getting Started
+![LinkVault Banner](https://img.shields.io/badge/Status-Feature%20Complete-success?style=for-the-badge) ![Tech Stack](https://img.shields.io/badge/Stack-Next.js_Supabase_Tailwind-blue?style=for-the-badge)
 
-First, run the development server:
+**LinkVault** is a modern, AI-powered bookmark manager that helps you save, organize, and rediscover your favorite web content. It leverages **Groq's LLaMA 3** model to automatically generate meaningful titles, summaries, and tags for every link you save. Built with **Next.js 14**, **Supabase**, and **Tailwind CSS**, it features real-time synchronization across devices and a beautiful, animation-rich dark mode interface.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🚀 Key Features
+
+- **✨ AI-Powered Organization**: Automatically generates concise titles, summaries, and relevant tags for any URL using LLaMA 3 (via Groq).
+- **⚡ Real-Time Sync**: Instant updates across all open tabs and devices using Supabase Realtime.
+- **🔐 Secure Authentication**: One-click Google Sign-In with Row Level Security (RLS) ensuring your data is private.
+- **🎨 Beautiful UI/UX**: sophisticated dark mode design with glassmorphism, micro-interactions, and smooth animations (Framer Motion-like feel).
+- **🔍 Smart Search & Filtering**: Instantly search by title, URL, or tags.
+- **📱 Fully Responsive**: Optimized experience for desktop, tablet, and mobile devices.
+
+---
+
+## 🛠 Tech Stack
+
+| Category       | Tool / Technology                  | Purpose                                      |
+|----------------|------------------------------------|----------------------------------------------|
+| **Framework**  | Next.js 16 (App Router)            | Full-stack React framework with SSR/SSG      |
+| **Styling**    | Tailwind CSS v4                    | Utility-first CSS framework                  |
+| **Database**   | Supabase (PostgreSQL)              | Managed database with auth and realtime      |
+| **Auth**       | Supabase Auth + Google OAuth       | Secure authentication                        |
+| **AI Model**   | Groq API (LLaMA 3 — 8B)           | Ultra-fast AI inference for text generation   |
+| **Scraping**   | Cheerio                            | Server-side HTML parsing for metadata        |
+| **Realtime**   | Supabase Realtime                  | WebSocket-based live data synchronization    |
+| **Icons**      | Lucide React                       | Modern, consistent icon set                  |
+| **Deployment** | Vercel                             | Production hosting and CI/CD                 |
+
+---
+
+## 🏗 Architecture
+
+```mermaid
+graph TD
+    Client[Client (Browser)] -->|Auth & Data Sync| Supabase
+    Client -->|Add URL| NextAPI[Next.js API Route (/api/ai-enhance)]
+    
+    subgraph "AI Enhancement Pipeline"
+        NextAPI -->|Fetch HTML| Cheerio[Cheerio Scraper]
+        Cheerio -->|Extract Metadata| NextAPI
+        NextAPI -->|Prompt| Groq[Groq API (LLaMA 3)]
+        Groq -->|Structured JSON| NextAPI
+    end
+    
+    NextAPI -->|Suggested Title/Tags| Client
+    Client -->|Save Bookmark| Supabase[Supabase DB]
+    Supabase -.->|Realtime Event (Insert/Delete)| Client
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🏁 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prerequisites
+- Node.js 18+ installed
+- A Supabase project (Text extraction & Auth enabled)
+- A Groq API Key
 
-## Learn More
+### 1. Clone the repository
+```bash
+git clone https://github.com/PriyanshuRanjan04/LinkVault.git
+cd LinkVault
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Install dependencies
+```bash
+npm install
+# Note for Windows Powershell users:
+# cmd /c "npm install"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Configure Environment Variables
+Create a `.env.local` file in the root directory:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-## Deploy on Vercel
+# Groq AI
+GROQ_API_KEY=your_groq_api_key
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Email (Optional)
+RESEND_API_KEY=your_resend_api_key
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 4. Run database migrations
+Execute the SQL commands in `schema.sql` in your Supabase SQL Editor to set up tables and policies.
+
+### 5. Start the development server
+```bash
+npm run dev
+# Windows Powershell:
+# cmd /c "npm run dev"
+```
+
+Open [http://localhost:3000](http://localhost:3000) to see the app.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
