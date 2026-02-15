@@ -7,6 +7,7 @@ import BookmarkList from "./BookmarkList";
 import SearchBar from "./SearchBar";
 import SortDropdown from "./SortDropdown";
 import ViewToggle from "./ViewToggle";
+import { ToastProvider } from "./Toast";
 
 export default function DashboardClient({
     initialBookmarks,
@@ -66,9 +67,13 @@ export default function DashboardClient({
         result.sort((a, b) => {
             switch (sort) {
                 case "date-desc":
-                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                    return (
+                        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                    );
                 case "date-asc":
-                    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                    return (
+                        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                    );
                 case "title-asc":
                     return a.title.localeCompare(b.title);
                 case "title-desc":
@@ -86,56 +91,58 @@ export default function DashboardClient({
     }, [bookmarks, search, sort, activeTag]);
 
     return (
-        <div className="space-y-6">
-            <AddBookmark onBookmarkAdded={handleBookmarkAdded} />
+        <ToastProvider>
+            <div className="space-y-6">
+                <AddBookmark onBookmarkAdded={handleBookmarkAdded} />
 
-            {/* ── Toolbar: Search + Sort + View ────────────────── */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                <SearchBar
-                    value={search}
-                    onChange={setSearch}
-                    resultCount={processedBookmarks.length}
-                />
-                <div className="flex items-center gap-3 ml-auto">
-                    <SortDropdown value={sort} onChange={setSort} />
-                    <ViewToggle value={viewMode} onChange={setViewMode} />
+                {/* ── Toolbar: Search + Sort + View ────────────────── */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                    <SearchBar
+                        value={search}
+                        onChange={setSearch}
+                        resultCount={processedBookmarks.length}
+                    />
+                    <div className="flex items-center gap-3 ml-auto">
+                        <SortDropdown value={sort} onChange={setSort} />
+                        <ViewToggle value={viewMode} onChange={setViewMode} />
+                    </div>
                 </div>
-            </div>
 
-            {/* ── Tag filters ──────────────────────────────────── */}
-            {allTags.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
-                    <button
-                        onClick={() => setActiveTag(null)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${activeTag === null
-                                ? "bg-blue-600 text-white"
-                                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                            }`}
-                    >
-                        All
-                    </button>
-                    {allTags.map((tag) => (
+                {/* ── Tag filters ──────────────────────────────────── */}
+                {allTags.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2">
                         <button
-                            key={tag}
-                            onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${activeTag === tag
+                            onClick={() => setActiveTag(null)}
+                            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors active:scale-95 ${activeTag === null
                                     ? "bg-blue-600 text-white"
                                     : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"
                                 }`}
                         >
-                            {tag}
+                            All
                         </button>
-                    ))}
-                </div>
-            )}
+                        {allTags.map((tag) => (
+                            <button
+                                key={tag}
+                                onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors active:scale-95 ${activeTag === tag
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                                    }`}
+                            >
+                                {tag}
+                            </button>
+                        ))}
+                    </div>
+                )}
 
-            {/* ── Bookmark list ────────────────────────────────── */}
-            <BookmarkList
-                bookmarks={processedBookmarks}
-                onBookmarkDeleted={handleBookmarkDeleted}
-                onBookmarkUpdated={handleBookmarkUpdated}
-                viewMode={viewMode}
-            />
-        </div>
+                {/* ── Bookmark list ────────────────────────────────── */}
+                <BookmarkList
+                    bookmarks={processedBookmarks}
+                    onBookmarkDeleted={handleBookmarkDeleted}
+                    onBookmarkUpdated={handleBookmarkUpdated}
+                    viewMode={viewMode}
+                />
+            </div>
+        </ToastProvider>
     );
 }

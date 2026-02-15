@@ -37,17 +37,21 @@ body {
 *,
 *::before,
 *::after {
-  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke;
+  transition-property: color, background-color, border-color, outline-color,
+    text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
 }
 
-/* Landing page background pulse animation — slow 15s cycle */
+/* ── Landing page background pulse — slow 15s cycle ─── */
 @keyframes gradient-shift {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.2;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.35;
     transform: scale(1.05);
@@ -56,4 +60,94 @@ body {
 
 .animate-gradient-slow {
   animation: gradient-shift 15s ease-in-out infinite;
+}
+
+/* ── Toast slide-in from right ─────────────────────── */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.35s ease-out;
+}
+
+/* ── Star pop bounce ──────────────────────────────── */
+@keyframes star-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(1.35);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-star-pop {
+  animation: star-pop 0.35s ease-out;
+}
+
+/* ── Card fade-in (staggerable with animation-delay) ── */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-in {
+  animation: card-in 0.4s ease-out both;
+}
+
+/* ── Card shrink-out for delete ────────────────────── */
+@keyframes card-out {
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+    max-height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+}
+
+.animate-card-out {
+  animation: card-out 0.3s ease-in forwards;
+}
+
+/* ── Tag pill bounce-in ────────────────────────────── */
+@keyframes pill-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  60% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-pill-in {
+  animation: pill-in 0.25s ease-out;
 }

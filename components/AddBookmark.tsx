@@ -5,6 +5,7 @@ import { Plus, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
 import TagInput from "./TagInput";
+import { useToast } from "./Toast";
 
 interface AddBookmarkProps {
     onBookmarkAdded: (bookmark: Bookmark) => void;
@@ -17,6 +18,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
     const [tags, setTags] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false);
+    const { toast } = useToast();
 
     const handleEnhance = async () => {
         if (!url) return;
@@ -30,8 +32,10 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
             const data = await response.json();
             if (data.title) setTitle(data.title);
             if (data.summary) setSummary(data.summary);
+            toast("AI enhancement applied!", "success");
         } catch (error) {
             console.error("AI enhancement failed:", error);
+            toast("AI enhancement failed. Try again.", "error");
         } finally {
             setIsEnhancing(false);
         }
@@ -41,7 +45,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
         e.preventDefault();
 
         if (!url || !title) {
-            alert("Please enter both URL and title");
+            toast("Please enter both URL and title", "error");
             return;
         }
 
@@ -76,9 +80,11 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
 
             if (error) {
                 console.error("Database error:", error);
-                alert("Failed to save bookmark");
+                toast("Failed to save bookmark", "error");
                 return;
             }
+
+            toast("Bookmark added successfully!", "success");
 
             // Clear form
             setUrl("");
@@ -87,7 +93,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
             setTags([]);
         } catch (error: any) {
             console.error("Error:", error);
-            alert(`Failed: ${error.message}`);
+            toast(`Failed: ${error.message}`, "error");
         } finally {
             setIsSubmitting(false);
         }
@@ -144,7 +150,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                             type="button"
                             onClick={handleEnhance}
                             disabled={isEnhancing || !url}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 dark:bg-purple-900/20 dark:text-purple-400 rounded-md hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors disabled:opacity-50 whitespace-nowrap"
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 dark:bg-purple-900/20 dark:text-purple-400 rounded-md hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors disabled:opacity-50 whitespace-nowrap active:scale-95"
                         >
                             <Sparkles className="w-4 h-4" />
                             {isEnhancing ? "Generating..." : "Auto-Generate"}
@@ -159,7 +165,9 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                         className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
                     >
                         Summary{" "}
-                        <span className="text-zinc-400 text-xs font-normal">(Optional)</span>
+                        <span className="text-zinc-400 text-xs font-normal">
+                            (Optional)
+                        </span>
                     </label>
                     <textarea
                         id="summary"
@@ -175,7 +183,9 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 <div>
                     <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                         Tags{" "}
-                        <span className="text-zinc-400 text-xs font-normal">(Optional)</span>
+                        <span className="text-zinc-400 text-xs font-normal">
+                            (Optional)
+                        </span>
                     </label>
                     <TagInput tags={tags} onChange={setTags} />
                 </div>
@@ -184,7 +194,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-medium"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-medium active:scale-[0.98]"
                 >
                     <Plus className="w-4 h-4" />
                     {isSubmitting ? "Adding..." : "Add Bookmark"}

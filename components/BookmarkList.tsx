@@ -1,10 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Bookmark, ViewMode } from "@/types/custom";
-import { Trash2, ExternalLink, Bookmark as BookmarkIcon, Star } from "lucide-react";
+import {
+    Trash2,
+    ExternalLink,
+    Bookmark as BookmarkIcon,
+    Star,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useToast } from "./Toast";
 
 interface BookmarkListProps {
     bookmarks: Bookmark[];
@@ -63,22 +69,40 @@ export default function BookmarkList({
     viewMode,
 }: BookmarkListProps) {
     const supabase = useMemo(() => createClient(), []);
+    const { toast } = useToast();
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [poppedStarId, setPoppedStarId] = useState<string | null>(null);
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this bookmark?")) return;
-        onBookmarkDeleted(id);
+
+        // Play shrink animation, then remove
+        setDeletingId(id);
+        setTimeout(() => {
+            onBookmarkDeleted(id);
+            setDeletingId(null);
+            toast("Bookmark deleted", "success");
+        }, 300);
 
         const { error } = await supabase.from("bookmarks").delete().eq("id", id);
         if (error) {
             console.error("Error deleting bookmark:", error);
-            alert("Failed to delete bookmark. Please refresh the page.");
+            toast("Failed to delete bookmark. Please refresh.", "error");
         }
     };
 
     const handleToggleFavorite = async (bookmark: Bookmark) => {
         const updated = { ...bookmark, is_favorite: !bookmark.is_favorite };
-        // Optimistic update
         onBookmarkUpdated(updated);
+
+        // Star pop animation
+        setPoppedStarId(bookmark.id);
+        setTimeout(() => setPoppedStarId(null), 400);
+
+        toast(
+            updated.is_favorite ? "Added to favorites ★" : "Removed from favorites",
+            "info"
+        );
 
         const { error } = await supabase
             .from("bookmarks")
@@ -87,8 +111,8 @@ export default function BookmarkList({
 
         if (error) {
             console.error("Error updating favorite:", error);
-            // Revert
-            onBookmarkUpdated(bookmark);
+            onBookmarkUpdated(bookmark); // revert
+            toast("Failed to update. Please try again.", "error");
         }
     };
 
@@ -103,7 +127,8 @@ export default function BookmarkList({
                     No bookmarks yet
                 </h3>
                 <p className="text-zinc-500 dark:text-zinc-400 mb-6 max-w-sm">
-                    Start building your digital library by adding your first bookmark above!
+                    Start building your digital library by adding your first bookmark
+                    above!
                 </p>
             </div>
         );
@@ -113,10 +138,12 @@ export default function BookmarkList({
     if (viewMode === "list") {
         return (
             <div className="flex flex-col gap-3">
-                {bookmarks.map((bookmark) => (
+                {bookmarks.map((bookmark, i) => (
                     <div
                         key={bookmark.id}
-                        className="group flex items-center gap-4 p-4 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200"
+                        className={`group flex items-center gap-4 p-4 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 animate-card-in ${deletingId === bookmark.id ? "animate-card-out" : ""
+                            }`}
+                        style={{ animationDelay: `${i * 50}ms` }}
                     >
                         <FaviconImage url={bookmark.url} />
 
@@ -131,7 +158,7 @@ export default function BookmarkList({
                                         {bookmark.tags.slice(0, 3).map((tag) => (
                                             <span
                                                 key={tag}
-                                                className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-[10px] font-medium"
+                                                className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-[10px] font-medium animate-pill-in"
                                             >
                                                 {tag}
                                             </span>
@@ -161,11 +188,12 @@ export default function BookmarkList({
                         <div className="flex items-center gap-1 shrink-0">
                             <button
                                 onClick={() => handleToggleFavorite(bookmark)}
-                                className="p-2 rounded-full transition-colors"
+                                className="p-2 rounded-full transition-colors active:scale-95"
                                 title={bookmark.is_favorite ? "Unfavorite" : "Favorite"}
                             >
                                 <Star
-                                    className={`w-4 h-4 ${bookmark.is_favorite
+                                    className={`w-4 h-4 ${poppedStarId === bookmark.id ? "animate-star-pop" : ""
+                                        } ${bookmark.is_favorite
                                             ? "fill-yellow-400 text-yellow-400"
                                             : "text-zinc-400 hover:text-yellow-400"
                                         }`}
@@ -173,7 +201,7 @@ export default function BookmarkList({
                             </button>
                             <button
                                 onClick={() => handleDelete(bookmark.id)}
-                                className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+                                className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors active:scale-95"
                                 title="Delete Bookmark"
                             >
                                 <Trash2 className="w-4 h-4" />
@@ -188,19 +216,22 @@ export default function BookmarkList({
     /* ── Grid view (default) ─────────────────────────────── */
     return (
         <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {bookmarks.map((bookmark) => (
+            {bookmarks.map((bookmark, i) => (
                 <div
                     key={bookmark.id}
-                    className="group relative flex flex-col p-6 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:-translate-y-1 hover:scale-[1.02]"
+                    className={`group relative flex flex-col p-6 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:-translate-y-1 hover:scale-[1.02] animate-card-in ${deletingId === bookmark.id ? "animate-card-out" : ""
+                        }`}
+                    style={{ animationDelay: `${i * 60}ms` }}
                 >
                     {/* Star button — top right */}
                     <button
                         onClick={() => handleToggleFavorite(bookmark)}
-                        className="absolute top-4 right-4 p-1 rounded-full transition-colors"
+                        className="absolute top-4 right-4 p-1 rounded-full transition-colors active:scale-95"
                         title={bookmark.is_favorite ? "Unfavorite" : "Favorite"}
                     >
                         <Star
-                            className={`w-5 h-5 ${bookmark.is_favorite
+                            className={`w-5 h-5 ${poppedStarId === bookmark.id ? "animate-star-pop" : ""
+                                } ${bookmark.is_favorite
                                     ? "fill-yellow-400 text-yellow-400"
                                     : "text-zinc-300 hover:text-yellow-400"
                                 }`}
@@ -242,7 +273,7 @@ export default function BookmarkList({
                             {bookmark.tags.map((tag) => (
                                 <span
                                     key={tag}
-                                    className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-xs font-medium"
+                                    className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-xs font-medium animate-pill-in"
                                 >
                                     {tag}
                                 </span>
@@ -259,7 +290,7 @@ export default function BookmarkList({
                         </span>
                         <button
                             onClick={() => handleDelete(bookmark.id)}
-                            className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+                            className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors active:scale-95"
                             title="Delete Bookmark"
                         >
                             <Trash2 className="w-4 h-4" />
