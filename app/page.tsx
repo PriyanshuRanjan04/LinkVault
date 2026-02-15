@@ -107,6 +107,7 @@ export default async function Home() {
   } = await supabase.auth.getUser();
 
   if (user) {
+    // Redirect to dashboard if logged in
     redirect("/dashboard");
   }
 
