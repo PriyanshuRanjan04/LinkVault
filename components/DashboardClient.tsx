@@ -9,13 +9,12 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
     const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks || []);
 
     const handleBookmarkAdded = (newBookmark: Bookmark) => {
-        console.log("✅ DashboardClient: Adding bookmark", newBookmark);
-        setBookmarks((prev) => [newBookmark, ...prev]);
+        console.log("✅ Adding bookmark immediately:", newBookmark);
+        setBookmarks([newBookmark, ...bookmarks]);
     };
 
     const handleBookmarkDeleted = (id: string) => {
-        console.log("✅ DashboardClient: Deleting bookmark", id);
-        setBookmarks((prev) => prev.filter((b) => b.id !== id));
+        setBookmarks(bookmarks.filter((b) => b.id !== id));
     };
 
     return (

@@ -39,6 +39,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("🔵 Form submitted");
 
         if (!url || !title) {
             alert('Please enter both URL and title');
@@ -55,7 +56,6 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 throw new Error("User not authenticated");
             }
 
-            // Create the new bookmark object
             const newBookmark: Bookmark = {
                 id: crypto.randomUUID(),
                 title,
@@ -65,32 +65,34 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 created_at: new Date().toISOString()
             };
 
-            // 1. Update UI immediately (optimistic update)
-            console.log("✅ AddBookmark: Calling onBookmarkAdded");
+            console.log("🟢 Calling onBookmarkAdded with:", newBookmark);
+
+            // Update UI immediately
             onBookmarkAdded(newBookmark);
 
-            // 2. Save to database in background
+            console.log("🟡 onBookmarkAdded called, now saving to DB");
+
+            // Save to database
             const { error } = await supabase
                 .from('bookmarks')
                 .insert(newBookmark);
 
             if (error) {
-                console.error("❌ Database insert error:", error);
-                alert("Failed to save bookmark. Please try again.");
-                // Note: In a real app, you might want to rollback the UI here
+                console.error("❌ Database error:", error);
+                alert("Failed to save bookmark");
                 return;
             }
 
-            console.log("✅ Bookmark saved to database");
+            console.log("✅ Saved to database successfully");
 
-            // 3. Clear form
+            // Clear form
             setUrl("");
             setTitle("");
             setSummary("");
 
         } catch (error: any) {
-            console.error("❌ Error adding bookmark:", error);
-            alert(`Failed to add bookmark: ${error.message}`);
+            console.error("❌ Error:", error);
+            alert(`Failed: ${error.message}`);
         } finally {
             setIsSubmitting(false);
         }
