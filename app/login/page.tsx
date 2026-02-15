@@ -27,11 +27,14 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-900">
-            <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-800 rounded-lg shadow-md">
-                <h2 className="text-2xl font-bold text-center mb-6 text-zinc-900 dark:text-white">
-                    Welcome Back
+        <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-900 px-4">
+            <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-700">
+                <h2 className="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                    Welcome to LinkVault
                 </h2>
+                <p className="text-center text-sm text-zinc-500 dark:text-zinc-400 mb-8">
+                    Sign in to manage your bookmarks
+                </p>
                 <button
                     onClick={handleLogin}
                     disabled={isLoading}
