@@ -48,14 +48,17 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
     }, [supabase]);
 
     const handleBookmarkAdded = (newBookmark: Bookmark) => {
-        console.log("DashboardClient: Adding bookmark", newBookmark);
+        console.log("DashboardClient: handleBookmarkAdded CALLED", newBookmark);
         // Optimistic update for current tab
         setBookmarks((prev) => {
+            console.log("DashboardClient: Previous bookmarks count", prev.length);
             if (prev.some((b) => b.id === newBookmark.id)) {
                 console.log("DashboardClient: Duplicate ID blocked", newBookmark.id);
                 return prev;
             }
-            return [newBookmark, ...prev];
+            const updated = [newBookmark, ...prev];
+            console.log("DashboardClient: New bookmarks count", updated.length);
+            return updated;
         });
     };
 

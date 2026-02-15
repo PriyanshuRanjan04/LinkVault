@@ -62,8 +62,11 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
             };
 
             // 1. Optimistic Update (Immediate)
+            console.log("AddBookmark: Calling onBookmarkAdded with", newBookmarkPayload);
             onBookmarkAdded(newBookmarkPayload as Bookmark);
-            alert("Bookmark added successfully!");
+            console.log("AddBookmark: Called onBookmarkAdded");
+            // alert("Bookmark added successfully!"); // Removed to unblock UI
+            console.log("Bookmark added optimistically");
 
             // 2. Fire and Forget Insert (Backend)
             const { error } = await supabase
