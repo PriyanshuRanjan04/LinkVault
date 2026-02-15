@@ -99,7 +99,7 @@ export default function Contact() {
                                         <Linkedin className="w-5 h-5 text-zinc-400 hover:text-purple-400 transition-colors" />
                                     </a>
                                     <a
-                                        href="priyanshuranjan11260@gmail.com"
+                                        href="mailto:priyanshuranjan11260@gmail.com"
                                         className="p-3 bg-zinc-800/80 hover:bg-purple-500/20 border border-zinc-700 hover:border-purple-500/40 rounded-lg transition-all hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20"
                                         aria-label="Email"
                                     >

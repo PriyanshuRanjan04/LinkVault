@@ -46,11 +46,44 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
         }
 
         const timeoutId = setTimeout(() => {
-            handleEnhance();
+            // Call handleEnhance directly here instead of depending on it
+            if (isEnhancing) return;
+
+            setIsEnhancing(true);
+            setShowSuggestions(false);
+
+            fetch("/api/ai-enhance", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url }),
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("AI Response:", data); // Debug log
+
+                    if (data.titleOptions && data.titleOptions.length > 0) {
+                        setTitleOptions(data.titleOptions);
+                        setSelectedTitleIndex(0);
+                        setTitle(data.titleOptions[0]);
+                        setShowSuggestions(true);
+                    }
+
+                    if (data.summary) setSummary(data.summary);
+                    if (data.suggestedTags) setSuggestedTags(data.suggestedTags);
+
+                    toast("✨ AI suggestions ready!", "success");
+                })
+                .catch(error => {
+                    console.error("AI enhancement failed:", error);
+                    // Silently fail for auto-trigger
+                })
+                .finally(() => {
+                    setIsEnhancing(false);
+                });
         }, 1000); // Debounce for 1 second
 
         return () => clearTimeout(timeoutId);
-    }, [url]);
+    }, [url, isUrlValid]); // Only depend on url and isUrlValid
 
     const handleEnhance = async () => {
         if (!isUrlValid || isEnhancing) return;
