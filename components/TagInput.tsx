@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 interface TagInputProps {
     tags: string[];
     onChange: (tags: string[]) => void;
+    disabled?: boolean;
 }
 
 const SUGGESTIONS = [
@@ -21,7 +22,7 @@ const SUGGESTIONS = [
     "ai",
 ];
 
-export default function TagInput({ tags, onChange }: TagInputProps) {
+export default function TagInput({ tags, onChange, disabled = false }: TagInputProps) {
     const [input, setInput] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -84,8 +85,9 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
                     onFocus={() => setShowSuggestions(true)}
                     onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                     onKeyDown={handleKeyDown}
-                    placeholder={tags.length === 0 ? "Add tags..." : ""}
-                    className="flex-1 min-w-[80px] bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-500"
+                    placeholder={tags.length === 0 ? (disabled ? "Enter URL first" : "Add tags...") : ""}
+                    disabled={disabled}
+                    className="flex-1 min-w-[80px] bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-50"
                 />
             </div>
 

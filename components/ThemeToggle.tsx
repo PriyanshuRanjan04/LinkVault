@@ -1,57 +1,79 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Monitor } from "lucide-react";
+
+type Theme = "light" | "dark" | "system";
 
 export default function ThemeToggle() {
-    const [isDark, setIsDark] = useState(false);
+    const [theme, setTheme] = useState<Theme>("system");
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
-        const stored = localStorage.getItem("theme");
-        const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const shouldBeDark = stored === "dark" || (!stored && systemDark);
+        const stored = localStorage.getItem("theme") as Theme | null;
+        const currentTheme = stored || "system";
+        setTheme(currentTheme);
+        applyTheme(currentTheme);
 
-        setIsDark(shouldBeDark);
-        if (shouldBeDark) {
-            document.documentElement.classList.add("dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-        }
+        // Listen for system theme changes when in system mode
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        const handleChange = () => {
+            if (localStorage.getItem("theme") === "system") {
+                applyTheme("system");
+            }
+        };
+        mediaQuery.addEventListener("change", handleChange);
+        return () => mediaQuery.removeEventListener("change", handleChange);
     }, []);
 
-    const toggleTheme = () => {
-        const next = !isDark;
-        setIsDark(next);
-        if (next) {
+    const applyTheme = (newTheme: Theme) => {
+        if (newTheme === "system") {
+            const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            if (systemDark) {
+                document.documentElement.classList.add("dark");
+            } else {
+                document.documentElement.classList.remove("dark");
+            }
+        } else if (newTheme === "dark") {
             document.documentElement.classList.add("dark");
-            localStorage.setItem("theme", "dark");
         } else {
             document.documentElement.classList.remove("dark");
-            localStorage.setItem("theme", "light");
         }
     };
 
-    // Avoid hydration mismatch — render nothing until mounted
-    if (!mounted) return <div className="w-14 h-7" />;
+    const cycleTheme = () => {
+        const cycle: Theme[] = ["light", "dark", "system"];
+        const currentIndex = cycle.indexOf(theme);
+        const nextTheme = cycle[(currentIndex + 1) % cycle.length];
+
+        setTheme(nextTheme);
+        localStorage.setItem("theme", nextTheme);
+        applyTheme(nextTheme);
+    };
+
+    // Avoid hydration mismatch
+    if (!mounted) return <div className="w-9 h-9" />;
+
+    const getIcon = () => {
+        switch (theme) {
+            case "light":
+                return <Sun className="w-4 h-4 text-yellow-500" />;
+            case "dark":
+                return <Moon className="w-4 h-4 text-purple-400" />;
+            case "system":
+                return <Monitor className="w-4 h-4 text-blue-400" />;
+        }
+    };
 
     return (
         <button
-            onClick={toggleTheme}
-            className="relative w-14 h-7 rounded-full bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
-            aria-label="Toggle theme"
+            onClick={cycleTheme}
+            className="w-9 h-9 rounded-lg bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-700 hover:border-purple-500/50 transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-zinc-900 active:scale-95"
+            aria-label={`Current theme: ${theme}. Click to cycle.`}
+            title={`Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)}`}
         >
-            <div
-                className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-zinc-900 shadow-md transform transition-transform duration-300 flex items-center justify-center ${isDark ? "translate-x-7" : "translate-x-0"
-                    }`}
-            >
-                {isDark ? (
-                    <Moon className="w-4 h-4 text-purple-400" />
-                ) : (
-                    <Sun className="w-4 h-4 text-yellow-500" />
-                )}
-            </div>
+            {getIcon()}
         </button>
     );
 }

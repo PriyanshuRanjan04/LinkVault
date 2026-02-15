@@ -4,6 +4,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import ProfileDropdown from "@/components/ProfileDropdown";
 import { redirect } from "next/navigation";
 import { Bookmark } from "lucide-react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -33,14 +34,14 @@ export default async function Dashboard() {
                     <div className="flex items-center justify-between h-16 gap-4">
                         {/* Left: Logo + Stats */}
                         <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
+                            <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:shadow-purple-500/40 transition-shadow">
                                     <Bookmark className="w-4 h-4 text-white" />
                                 </div>
-                                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent group-hover:from-blue-400 group-hover:to-purple-400 transition-all">
                                     LinkVault
                                 </h1>
-                            </div>
+                            </Link>
                             <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-lg">
                                 <span className="text-xs font-medium text-purple-400">
                                     {bookmarkCount}
