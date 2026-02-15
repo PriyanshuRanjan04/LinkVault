@@ -19,6 +19,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import GetStartedButton from "@/components/GetStartedButton";
 import FooterLoginButton from "@/components/FooterLoginButton";
+import Contact from "@/components/Contact";
 
 /* ── Static data ───────────────────────────────────────── */
 
@@ -277,17 +278,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ═══════════════ BOTTOM CTA ══════════════════════ */}
+      {/* ═══════════════ CONTACT ═══════════════════════════ */}
       <ScrollReveal>
-        <section className="text-center px-4 pb-20">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to organize your web?
-          </h2>
-          <p className="text-zinc-400 mb-8 max-w-md mx-auto">
-            It&apos;s free, fast, and takes less than 30 seconds to get started.
-          </p>
-          <GetStartedButton />
-        </section>
+        <Contact />
       </ScrollReveal>
 
       {/* ═══════════════ FOOTER ═══════════════════════════ */}
