@@ -50,13 +50,18 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
     }, []);
 
     const handleBookmarkAdded = (newBookmark: Bookmark) => {
-        console.log("handleBookmarkAdded called with:", newBookmark);
-        // Optimistic update - add immediately
+        // alert(`Callback received! ID: ${newBookmark.id}`); // THIS SHOULD POPUP
+        console.log("BEFORE state update, count:", bookmarks.length);
+
         setBookmarks((prev) => {
+            console.log("INSIDE setState, prev count:", prev.length);
             if (prev.some((b) => b.id === newBookmark.id)) {
+                console.log("Duplicate detected!");
                 return prev;
             }
-            return [newBookmark, ...prev];
+            const newState = [newBookmark, ...prev];
+            console.log("NEW state count:", newState.length);
+            return newState;
         });
     };
 

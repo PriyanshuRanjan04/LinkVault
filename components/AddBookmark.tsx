@@ -40,6 +40,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log("AddBookmark: SUBMIT CLICKED", { url, title });
+
         if (!url || !title) {
             console.log("AddBookmark: Missing URL or Title");
             return;
@@ -58,7 +59,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
             const newId = crypto.randomUUID();
             const now = new Date().toISOString();
 
-            const newBookmarkPayload = {
+            const newBookmarkPayload: Bookmark = {
                 id: newId,
                 title,
                 url,
@@ -67,28 +68,29 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 created_at: now
             };
 
-            // 1. Optimistic Update (Immediate)
-            console.log("AddBookmark: Calling onBookmarkAdded with", newBookmarkPayload);
-            onBookmarkAdded(newBookmarkPayload as Bookmark);
-            console.log("AddBookmark: Called onBookmarkAdded");
-            // alert("Bookmark added successfully!"); // Removed to unblock UI
-            console.log("Bookmark added optimistically");
+            console.log("AddBookmark: About to call onBookmarkAdded");
 
-            // 2. Fire and Forget Insert (Backend)
-            const { error } = await supabase
+            // 1. FIRST: Update UI optimistically
+            onBookmarkAdded(newBookmarkPayload);
+
+            console.log("AddBookmark: onBookmarkAdded called successfully");
+
+            // 2. THEN: Insert to database (don't await here if you want fire-and-forget)
+            supabase
                 .from('bookmarks')
-                .insert(newBookmarkPayload);
+                .insert(newBookmarkPayload)
+                .then(({ error }) => {
+                    if (error) {
+                        console.error("Insert error:", error);
+                        // alert("Error syncing bookmark to server. Please refresh.");
+                    }
+                });
 
-            if (error) {
-                console.error("Insert error:", error);
-                // Ideally rollback, but for now just alert
-                alert("Error syncing bookmark to server. Please refresh.");
-            }
-
-            // Reset form
+            // 3. Reset form immediately (don't wait for DB)
             setUrl("");
             setTitle("");
             setSummary("");
+
         } catch (error: any) {
             console.error("Error adding bookmark:", error);
             alert(`Failed to add bookmark: ${error.message || "Unknown error"}`);
