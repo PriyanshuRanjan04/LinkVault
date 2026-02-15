@@ -17,6 +17,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import GetStartedButton from "@/components/GetStartedButton";
 
 /* ── Static data ───────────────────────────────────────── */
 
@@ -131,13 +132,7 @@ export default async function Home() {
           </p>
         </ScrollReveal>
         <ScrollReveal delay={300}>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 px-8 py-4 text-lg font-semibold text-white rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-2xl"
-          >
-            Get Started Free
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+          <GetStartedButton />
         </ScrollReveal>
       </section>
 
@@ -290,13 +285,7 @@ export default async function Home() {
           <p className="text-zinc-400 mb-8 max-w-md mx-auto">
             It&apos;s free, fast, and takes less than 30 seconds to get started.
           </p>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 px-8 py-4 text-lg font-semibold text-white rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-2xl"
-          >
-            Get Started Free
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+          <GetStartedButton />
         </section>
       </ScrollReveal>
 

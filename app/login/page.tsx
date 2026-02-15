@@ -30,7 +30,7 @@ export default function LoginPage() {
     return (
         <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4">
             {/* ── Animated gradient background (matches landing page) ── */}
-            <div className="fixed inset-0 -z-10 bg-gradient-to-br from-[#1e1b4b] to-[#0f172a]" />
+            <div className="fixed inset-0 -z-10 bg-gradient-to-br from-purple-900 via-blue-900 to-zinc-900" />
             <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 animate-gradient-slow" />
 
             {/* ── Back to Home ──────────────────────────────────── */}
