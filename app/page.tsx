@@ -112,7 +112,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="relative flex flex-col overflow-hidden">
+    <div className="relative flex flex-col overflow-hidden isolate">
       {/* ── Animated gradient background ─────────────────── */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-br from-purple-900 via-blue-900 to-zinc-900" />
       <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 animate-gradient-slow" />

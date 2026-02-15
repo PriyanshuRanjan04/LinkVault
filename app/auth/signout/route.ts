@@ -14,5 +14,5 @@ export async function POST(request: Request) {
     }
 
     revalidatePath("/", "layout");
-    redirect("/");
+    redirect("/"); // Redirects to landing page
 }
