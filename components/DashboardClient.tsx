@@ -9,8 +9,9 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
     const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks || []);
 
     const handleBookmarkAdded = (newBookmark: Bookmark) => {
-        console.log("✅ Adding bookmark immediately:", newBookmark);
-        setBookmarks([newBookmark, ...bookmarks]);
+        console.log("✅ DashboardClient: Adding bookmark", newBookmark);
+        // USE FUNCTIONAL UPDATE - this is the fix!
+        setBookmarks((prev) => [newBookmark, ...prev]);
     };
 
     const handleBookmarkDeleted = (id: string) => {
