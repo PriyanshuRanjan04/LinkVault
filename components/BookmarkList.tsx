@@ -120,13 +120,13 @@ export default function BookmarkList({
     if (bookmarks.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="w-24 h-24 mb-6 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                    <BookmarkIcon className="w-12 h-12 text-zinc-400" />
+                <div className="w-24 h-24 mb-6 rounded-full bg-zinc-800 flex items-center justify-center">
+                    <BookmarkIcon className="w-12 h-12 text-purple-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
+                <h3 className="text-xl font-semibold text-zinc-100 mb-2">
                     No bookmarks yet
                 </h3>
-                <p className="text-zinc-500 dark:text-zinc-400 mb-6 max-w-sm">
+                <p className="text-zinc-400 mb-6 max-w-sm">
                     Start building your digital library by adding your first bookmark
                     above!
                 </p>
@@ -141,7 +141,7 @@ export default function BookmarkList({
                 {bookmarks.map((bookmark, i) => (
                     <div
                         key={bookmark.id}
-                        className={`group flex items-center gap-4 p-4 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 animate-card-in ${deletingId === bookmark.id ? "animate-card-out" : ""
+                        className={`group flex items-center gap-4 p-4 bg-zinc-800 rounded-xl border border-zinc-700 hover:shadow-md hover:shadow-purple-500/10 hover:border-purple-500/40 transition-all duration-200 animate-card-in ${deletingId === bookmark.id ? "animate-card-out" : ""
                             }`}
                         style={{ animationDelay: `${i * 50}ms` }}
                     >
@@ -150,7 +150,7 @@ export default function BookmarkList({
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                                <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                                <h3 className="font-semibold text-zinc-100 truncate">
                                     {bookmark.title}
                                 </h3>
                                 {bookmark.tags?.length > 0 && (
@@ -158,7 +158,7 @@ export default function BookmarkList({
                                         {bookmark.tags.slice(0, 3).map((tag) => (
                                             <span
                                                 key={tag}
-                                                className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-[10px] font-medium animate-pill-in"
+                                                className="px-1.5 py-0.5 bg-purple-500/20 text-purple-300 rounded text-[10px] font-medium animate-pill-in"
                                             >
                                                 {tag}
                                             </span>
@@ -171,7 +171,7 @@ export default function BookmarkList({
                                     href={bookmark.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 truncate"
+                                    className="text-xs text-purple-400 hover:underline flex items-center gap-1 truncate"
                                 >
                                     <ExternalLink className="w-3 h-3 shrink-0" />
                                     {new URL(bookmark.url).hostname}
@@ -201,7 +201,7 @@ export default function BookmarkList({
                             </button>
                             <button
                                 onClick={() => handleDelete(bookmark.id)}
-                                className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors active:scale-95"
+                                className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-900/20 rounded-full transition-colors active:scale-95"
                                 title="Delete Bookmark"
                             >
                                 <Trash2 className="w-4 h-4" />
@@ -219,7 +219,7 @@ export default function BookmarkList({
             {bookmarks.map((bookmark, i) => (
                 <div
                     key={bookmark.id}
-                    className={`group relative flex flex-col p-6 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:-translate-y-1 hover:scale-[1.02] animate-card-in ${deletingId === bookmark.id ? "animate-card-out" : ""
+                    className={`group relative flex flex-col p-6 bg-zinc-800 rounded-xl border border-zinc-700 hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-500/40 transition-all duration-200 hover:-translate-y-1 hover:scale-[1.02] animate-card-in ${deletingId === bookmark.id ? "animate-card-out" : ""
                         }`}
                     style={{ animationDelay: `${i * 60}ms` }}
                 >
@@ -242,7 +242,7 @@ export default function BookmarkList({
                     <div className="flex items-start gap-3 mb-2 pr-8">
                         <FaviconImage url={bookmark.url} />
                         <h3
-                            className="font-semibold text-lg text-zinc-900 dark:text-zinc-100 line-clamp-2 flex-1"
+                            className="font-semibold text-lg text-zinc-100 line-clamp-2 flex-1"
                             title={bookmark.title}
                         >
                             {bookmark.title}
@@ -254,7 +254,7 @@ export default function BookmarkList({
                         href={bookmark.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 mb-3"
+                        className="text-sm text-purple-400 hover:underline flex items-center gap-1 mb-3"
                     >
                         <ExternalLink className="w-3 h-3" />
                         {new URL(bookmark.url).hostname}
@@ -262,7 +262,7 @@ export default function BookmarkList({
 
                     {/* Summary */}
                     {bookmark.summary && (
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-3 mb-3 flex-1">
+                        <p className="text-sm text-zinc-400 line-clamp-3 mb-3 flex-1">
                             {bookmark.summary}
                         </p>
                     )}
@@ -273,7 +273,7 @@ export default function BookmarkList({
                             {bookmark.tags.map((tag) => (
                                 <span
                                     key={tag}
-                                    className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-xs font-medium animate-pill-in"
+                                    className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs font-medium animate-pill-in"
                                 >
                                     {tag}
                                 </span>
@@ -282,7 +282,7 @@ export default function BookmarkList({
                     )}
 
                     {/* Footer — timestamp + delete */}
-                    <div className="flex items-center justify-between pt-4 mt-auto border-t border-zinc-100 dark:border-zinc-700">
+                    <div className="flex items-center justify-between pt-4 mt-auto border-t border-zinc-700">
                         <span className="text-xs text-zinc-400">
                             {formatDistanceToNow(new Date(bookmark.created_at), {
                                 addSuffix: true,
@@ -290,7 +290,7 @@ export default function BookmarkList({
                         </span>
                         <button
                             onClick={() => handleDelete(bookmark.id)}
-                            className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors active:scale-95"
+                            className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-900/20 rounded-full transition-colors active:scale-95"
                             title="Delete Bookmark"
                         >
                             <Trash2 className="w-4 h-4" />

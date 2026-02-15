@@ -39,15 +39,15 @@ export default function ThemeToggle() {
     return (
         <button
             onClick={toggleTheme}
-            className="relative w-14 h-7 rounded-full bg-zinc-200 dark:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="relative w-14 h-7 rounded-full bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
             aria-label="Toggle theme"
         >
             <div
-                className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white dark:bg-zinc-900 shadow-md transform transition-transform duration-300 flex items-center justify-center ${isDark ? "translate-x-7" : "translate-x-0"
+                className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-zinc-900 shadow-md transform transition-transform duration-300 flex items-center justify-center ${isDark ? "translate-x-7" : "translate-x-0"
                     }`}
             >
                 {isDark ? (
-                    <Moon className="w-4 h-4 text-blue-400" />
+                    <Moon className="w-4 h-4 text-purple-400" />
                 ) : (
                     <Sun className="w-4 h-4 text-yellow-500" />
                 )}

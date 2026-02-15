@@ -102,9 +102,9 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="mb-8 p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700"
+            className="mb-8 p-6 bg-zinc-800/80 rounded-xl shadow-lg shadow-purple-500/5 border border-purple-500/30 backdrop-blur-sm"
         >
-            <h3 className="text-lg font-medium mb-4 text-zinc-900 dark:text-zinc-100">
+            <h3 className="text-lg font-medium mb-4 text-zinc-100">
                 Add New Bookmark
             </h3>
 
@@ -113,7 +113,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 <div>
                     <label
                         htmlFor="url"
-                        className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+                        className="block text-sm font-medium text-zinc-300 mb-1"
                     >
                         URL
                     </label>
@@ -123,7 +123,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
                         placeholder="https://example.com"
-                        className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-transparent text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-zinc-600 rounded-md bg-zinc-900/50 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder:text-zinc-500"
                         required
                     />
                 </div>
@@ -132,7 +132,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 <div>
                     <label
                         htmlFor="title"
-                        className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+                        className="block text-sm font-medium text-zinc-300 mb-1"
                     >
                         Title
                     </label>
@@ -143,7 +143,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Bookmark Title"
-                            className="flex-1 px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-transparent text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="flex-1 px-3 py-2 border border-zinc-600 rounded-md bg-zinc-900/50 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder:text-zinc-500"
                             required
                         />
                         <button
@@ -162,10 +162,10 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 <div>
                     <label
                         htmlFor="summary"
-                        className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+                        className="block text-sm font-medium text-zinc-300 mb-1"
                     >
                         Summary{" "}
-                        <span className="text-zinc-400 text-xs font-normal">
+                        <span className="text-zinc-500 text-xs font-normal">
                             (Optional)
                         </span>
                     </label>
@@ -175,13 +175,13 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                         onChange={(e) => setSummary(e.target.value)}
                         placeholder="Brief description..."
                         rows={2}
-                        className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-transparent text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                        className="w-full px-3 py-2 border border-zinc-600 rounded-md bg-zinc-900/50 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none placeholder:text-zinc-500"
                     />
                 </div>
 
                 {/* Tags */}
                 <div>
-                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                    <label className="block text-sm font-medium text-zinc-300 mb-1">
                         Tags{" "}
                         <span className="text-zinc-400 text-xs font-normal">
                             (Optional)
@@ -194,7 +194,7 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-medium active:scale-[0.98]"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 font-medium active:scale-[0.98] shadow-lg shadow-purple-500/20"
                 >
                     <Plus className="w-4 h-4" />
                     {isSubmitting ? "Adding..." : "Add Bookmark"}

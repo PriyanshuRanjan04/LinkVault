@@ -115,8 +115,8 @@ export default function DashboardClient({
                         <button
                             onClick={() => setActiveTag(null)}
                             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors active:scale-95 ${activeTag === null
-                                ? "bg-blue-600 text-white"
-                                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                                : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200"
                                 }`}
                         >
                             All
@@ -126,8 +126,8 @@ export default function DashboardClient({
                                 key={tag}
                                 onClick={() => setActiveTag(activeTag === tag ? null : tag)}
                                 className={`px-3 py-1 rounded-full text-xs font-medium transition-colors active:scale-95 ${activeTag === tag
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                                    : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200"
                                     }`}
                             >
                                 {tag}

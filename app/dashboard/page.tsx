@@ -23,9 +23,9 @@ export default async function Dashboard() {
         .order("created_at", { ascending: false });
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
+        <div className="min-h-screen bg-zinc-900">
             {/* ── Navbar ─────────────────────────────────────────── */}
-            <nav className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-800/80 backdrop-blur-lg border-b border-zinc-200 dark:border-zinc-700">
+            <nav className="sticky top-0 z-30 bg-gradient-to-r from-zinc-900 via-purple-900/20 to-zinc-900 backdrop-blur-lg border-b border-purple-500/20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <h1 className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
@@ -33,14 +33,14 @@ export default async function Dashboard() {
                         </h1>
 
                         <div className="flex items-center gap-4">
-                            <span className="hidden sm:inline text-sm text-zinc-500 dark:text-zinc-400">
+                            <span className="hidden sm:inline text-sm text-zinc-400">
                                 {user.email}
                             </span>
                             <ThemeToggle />
                             <form action="/auth/signout" method="post">
                                 <button
                                     type="submit"
-                                    className="p-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+                                    className="p-2 text-zinc-400 hover:text-purple-400 rounded-lg hover:bg-purple-500/10 transition-colors"
                                     title="Sign Out"
                                 >
                                     <LogOut className="w-5 h-5" />

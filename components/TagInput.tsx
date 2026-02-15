@@ -56,17 +56,17 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
 
     return (
         <div className="relative">
-            <div className="flex flex-wrap items-center gap-1.5 p-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-transparent min-h-[42px] focus-within:ring-2 focus-within:ring-blue-500">
+            <div className="flex flex-wrap items-center gap-1.5 p-2 border border-zinc-600 rounded-md bg-zinc-900/50 min-h-[42px] focus-within:ring-2 focus-within:ring-purple-500">
                 {tags.map((tag) => (
                     <span
                         key={tag}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-xs font-medium"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs font-medium"
                     >
                         {tag}
                         <button
                             type="button"
                             onClick={() => removeTag(tag)}
-                            className="hover:text-blue-900 dark:hover:text-blue-100"
+                            className="hover:text-purple-100"
                             aria-label={`Remove ${tag} tag`}
                         >
                             <X className="w-3 h-3" />
@@ -85,13 +85,13 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
                     onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                     onKeyDown={handleKeyDown}
                     placeholder={tags.length === 0 ? "Add tags..." : ""}
-                    className="flex-1 min-w-[80px] bg-transparent text-sm text-zinc-900 dark:text-zinc-100 outline-none placeholder:text-zinc-400"
+                    className="flex-1 min-w-[80px] bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-500"
                 />
             </div>
 
             {/* Suggestions dropdown */}
             {showSuggestions && input && filteredSuggestions.length > 0 && (
-                <div className="absolute z-20 mt-1 w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg max-h-36 overflow-y-auto">
+                <div className="absolute z-20 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg shadow-purple-500/5 max-h-36 overflow-y-auto">
                     {filteredSuggestions.map((s) => (
                         <button
                             key={s}
@@ -100,7 +100,7 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
                                 e.preventDefault();
                                 addTag(s);
                             }}
-                            className="w-full text-left px-3 py-1.5 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                            className="w-full text-left px-3 py-1.5 text-sm text-zinc-300 hover:bg-zinc-700"
                         >
                             {s}
                         </button>

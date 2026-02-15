@@ -33,8 +33,8 @@ export default function ViewToggle({ value, onChange }: ViewToggleProps) {
         <button
             onClick={() => toggle(mode)}
             className={`p-2 rounded-lg transition-colors ${value === mode
-                    ? "bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400"
-                    : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                ? "bg-purple-500/20 text-purple-400"
+                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700"
                 }`}
             aria-label={`${mode} view`}
             aria-pressed={value === mode}
@@ -44,7 +44,7 @@ export default function ViewToggle({ value, onChange }: ViewToggleProps) {
     );
 
     return (
-        <div className="flex items-center gap-1 border border-zinc-300 dark:border-zinc-600 rounded-lg p-0.5">
+        <div className="flex items-center gap-1 border border-zinc-600 rounded-lg p-0.5">
             {btn("grid", LayoutGrid)}
             {btn("list", List)}
         </div>
