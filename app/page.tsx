@@ -107,7 +107,7 @@ export default async function Home() {
   } = await supabase.auth.getUser();
 
   if (user) {
-    // Redirect to dashboard if logged in
+    // Redirect to dashboard if logged in - Vercel Update
     redirect("/dashboard");
   }
 
