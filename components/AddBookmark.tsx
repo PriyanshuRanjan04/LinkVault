@@ -35,9 +35,15 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
         }
     };
 
+    console.log("AddBookmark: Component Rendered");
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!url || !title) return;
+        console.log("AddBookmark: SUBMIT CLICKED", { url, title });
+        if (!url || !title) {
+            console.log("AddBookmark: Missing URL or Title");
+            return;
+        }
 
         setIsSubmitting(true);
 
