@@ -50,20 +50,17 @@ export default function DashboardClient({ initialBookmarks }: { initialBookmarks
     }, []);
 
     const handleBookmarkAdded = (newBookmark: Bookmark) => {
-        // alert(`Callback received! ID: ${newBookmark.id}`); // THIS SHOULD POPUP
-        console.log("BEFORE state update, count:", bookmarks.length);
-
+        alert(`DashboardClient callback triggered! Title: ${newBookmark.title}`);
+        console.log("DashboardClient: handleBookmarkAdded called");
         setBookmarks((prev) => {
-            console.log("INSIDE setState, prev count:", prev.length);
             if (prev.some((b) => b.id === newBookmark.id)) {
-                console.log("Duplicate detected!");
                 return prev;
             }
-            const newState = [newBookmark, ...prev];
-            console.log("NEW state count:", newState.length);
-            return newState;
+            return [newBookmark, ...prev];
         });
     };
+
+    console.log("DashboardClient: Rendering, handleBookmarkAdded is:", typeof handleBookmarkAdded);
 
     const handleBookmarkDeleted = (id: string) => {
         console.log("handleBookmarkDeleted called with:", id);

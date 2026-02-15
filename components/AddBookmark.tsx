@@ -68,12 +68,14 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 created_at: now
             };
 
-            console.log("AddBookmark: About to call onBookmarkAdded");
+            console.log("About to call onBookmarkAdded");
+            console.log("onBookmarkAdded type:", typeof onBookmarkAdded);
+            console.log("Payload:", newBookmarkPayload);
 
             // 1. FIRST: Update UI optimistically
             onBookmarkAdded(newBookmarkPayload);
 
-            console.log("AddBookmark: onBookmarkAdded called successfully");
+            console.log("onBookmarkAdded called - did it execute?");
 
             // 2. THEN: Insert to database (don't await here if you want fire-and-forget)
             supabase
