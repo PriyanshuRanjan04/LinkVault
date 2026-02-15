@@ -1,24 +1,12 @@
-"use client";
-
-import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default function FooterLoginButton() {
-    const handleLogin = async () => {
-        const supabase = createClient();
-        await supabase.auth.signInWithOAuth({
-            provider: "google",
-            options: {
-                redirectTo: `${window.location.origin}/auth/callback`,
-            },
-        });
-    };
-
     return (
-        <button
-            onClick={handleLogin}
-            className="hover:text-white transition-colors text-left"
+        <Link
+            href="/login"
+            className="hover:text-white transition-colors"
         >
             Sign In
-        </button>
+        </Link>
     );
 }
