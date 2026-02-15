@@ -44,30 +44,32 @@ export async function POST(request: Request) {
             pageTitle = "Page";
         }
 
-        // 2. Call Groq for enhancement
+        // 2. Call Groq for smart suggestions
         const prompt = `
-      Analyze this webpage info:
-      URL: ${url}
-      Title: ${pageTitle}
-      Description: ${pageDescription}
-      Content Snippet: ${pageContent}
+Analyze this webpage info:
+URL: ${url}
+Title: ${pageTitle}
+Description: ${pageDescription}
+Content Snippet: ${pageContent}
 
-      Task:
-      1. Create a clean, concise title (max 50 chars).
-      2. Write a 1-2 sentence summary (max 150 chars).
+Task:
+1. Generate 3-4 alternative title suggestions (each max 50 chars). Make them concise, descriptive, and varied.
+2. Write a 1-2 sentence summary (max 150 chars).
+3. Suggest 4-6 relevant tags (single words, lowercase, no spaces).
 
-      Return JSON ONLY:
-      {
-        "title": "...",
-        "summary": "..."
-      }
+Return JSON ONLY:
+{
+  "titleOptions": ["Option 1", "Option 2", "Option 3", "Option 4"],
+  "summary": "...",
+  "suggestedTags": ["tag1", "tag2", "tag3", "tag4"]
+}
     `;
 
         const chatCompletion = await groq.chat.completions.create({
             messages: [
                 {
                     role: "system",
-                    content: "You are a helpful assistant that generates structured JSON for bookmark metadata. Always return valid JSON.",
+                    content: "You are a helpful assistant that generates structured JSON for bookmark metadata. Always return valid JSON with diverse, concise title options and relevant single-word tags.",
                 },
                 {
                     role: "user",
@@ -75,7 +77,7 @@ export async function POST(request: Request) {
                 },
             ],
             model: "llama3-8b-8192",
-            temperature: 0.5,
+            temperature: 0.7,
             response_format: { type: "json_object" },
         });
 
