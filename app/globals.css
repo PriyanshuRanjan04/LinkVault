@@ -3,25 +3,35 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Dark theme only */
+  --background: 9 9 11;
+  /* zinc-950 */
+  --foreground: 250 250 250;
+  /* zinc-50 */
+  --card: 24 24 27;
+  /* zinc-900 */
+  --card-foreground: 250 250 250;
+  --border: 39 39 42;
+  /* zinc-800 */
+  --input: 39 39 42;
+  --primary: 139 92 246;
+  /* purple-500 */
+  --primary-foreground: 255 255 255;
+  --muted: 39 39 42;
+  /* zinc-800 */
+  --muted-foreground: 161 161 170;
+  /* zinc-400 */
+  --accent: 39 39 42;
+  --accent-foreground: 250 250 250;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-}
-
-.dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --color-card: rgb(var(--card));
+  --color-border: rgb(var(--border));
+  --color-primary: rgb(var(--primary));
+  --color-muted: rgb(var(--muted));
 }
 
 html {
@@ -29,8 +39,8 @@ html {
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
 }
 
 /* Smooth color transitions globally */

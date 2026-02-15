@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import DashboardClient from "@/components/DashboardClient";
-import ThemeToggle from "@/components/ThemeToggle";
 import ProfileDropdown from "@/components/ProfileDropdown";
 import { redirect } from "next/navigation";
 import { Bookmark } from "lucide-react";
@@ -54,7 +53,6 @@ export default async function Dashboard() {
 
                         {/* Right: Actions */}
                         <div className="flex items-center gap-3">
-                            <ThemeToggle />
                             <ProfileDropdown email={user.email || ""} />
                         </div>
                     </div>

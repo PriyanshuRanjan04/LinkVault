@@ -109,10 +109,7 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) {
-    // Redirect to dashboard if logged in - Vercel Update
-    redirect("/dashboard");
-  }
+  // No redirect — allow logged-in users to view landing page
 
   return (
     <div className="relative flex flex-col overflow-hidden isolate">
@@ -134,7 +131,17 @@ export default async function Home() {
           </p>
         </ScrollReveal>
         <ScrollReveal delay={300}>
-          <GetStartedButton />
+          {user ? (
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-full hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 active:scale-[0.98]"
+            >
+              Go to Dashboard
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          ) : (
+            <GetStartedButton />
+          )}
         </ScrollReveal>
       </section>
 
