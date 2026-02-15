@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Bookmark } from "@/types/custom";
+import TagInput from "./TagInput";
 
 interface AddBookmarkProps {
     onBookmarkAdded: (bookmark: Bookmark) => void;
@@ -13,7 +14,8 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
     const [url, setUrl] = useState("");
     const [title, setTitle] = useState("");
     const [summary, setSummary] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false); // Replaces isPending
+    const [tags, setTags] = useState<string[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false);
 
     const handleEnhance = async () => {
@@ -35,14 +37,11 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
         }
     };
 
-    console.log("AddBookmark: Component Rendered");
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("🔵 Form submitted");
 
         if (!url || !title) {
-            alert('Please enter both URL and title');
+            alert("Please enter both URL and title");
             return;
         }
 
@@ -50,7 +49,9 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
 
         try {
             const supabase = createClient();
-            const { data: { user } } = await supabase.auth.getUser();
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
 
             if (!user) {
                 throw new Error("User not authenticated");
@@ -61,37 +62,31 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                 title,
                 url,
                 summary: summary || null,
+                is_favorite: false,
+                tags,
                 user_id: user.id,
-                created_at: new Date().toISOString()
+                created_at: new Date().toISOString(),
             };
-
-            console.log("🟢 Calling onBookmarkAdded with:", newBookmark);
 
             // Update UI immediately
             onBookmarkAdded(newBookmark);
 
-            console.log("🟡 onBookmarkAdded called, now saving to DB");
-
             // Save to database
-            const { error } = await supabase
-                .from('bookmarks')
-                .insert(newBookmark);
+            const { error } = await supabase.from("bookmarks").insert(newBookmark);
 
             if (error) {
-                console.error("❌ Database error:", error);
+                console.error("Database error:", error);
                 alert("Failed to save bookmark");
                 return;
             }
-
-            console.log("✅ Saved to database successfully");
 
             // Clear form
             setUrl("");
             setTitle("");
             setSummary("");
-
+            setTags([]);
         } catch (error: any) {
-            console.error("❌ Error:", error);
+            console.error("Error:", error);
             alert(`Failed: ${error.message}`);
         } finally {
             setIsSubmitting(false);
@@ -99,12 +94,21 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="mb-8 p-6 bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700">
-            <h3 className="text-lg font-medium mb-4 text-zinc-900 dark:text-zinc-100">Add New Bookmark</h3>
+        <form
+            onSubmit={handleSubmit}
+            className="mb-8 p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700"
+        >
+            <h3 className="text-lg font-medium mb-4 text-zinc-900 dark:text-zinc-100">
+                Add New Bookmark
+            </h3>
 
             <div className="space-y-4">
+                {/* URL */}
                 <div>
-                    <label htmlFor="url" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                    <label
+                        htmlFor="url"
+                        className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+                    >
                         URL
                     </label>
                     <input
@@ -118,8 +122,12 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                     />
                 </div>
 
+                {/* Title + AI button */}
                 <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                    <label
+                        htmlFor="title"
+                        className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+                    >
                         Title
                     </label>
                     <div className="flex gap-2">
@@ -144,9 +152,14 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                     </div>
                 </div>
 
+                {/* Summary */}
                 <div>
-                    <label htmlFor="summary" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                        Summary <span className="text-zinc-400 text-xs font-normal">(Optional)</span>
+                    <label
+                        htmlFor="summary"
+                        className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+                    >
+                        Summary{" "}
+                        <span className="text-zinc-400 text-xs font-normal">(Optional)</span>
                     </label>
                     <textarea
                         id="summary"
@@ -158,10 +171,20 @@ export default function AddBookmark({ onBookmarkAdded }: AddBookmarkProps) {
                     />
                 </div>
 
+                {/* Tags */}
+                <div>
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                        Tags{" "}
+                        <span className="text-zinc-400 text-xs font-normal">(Optional)</span>
+                    </label>
+                    <TagInput tags={tags} onChange={setTags} />
+                </div>
+
+                {/* Submit */}
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-medium"
                 >
                     <Plus className="w-4 h-4" />
                     {isSubmitting ? "Adding..." : "Add Bookmark"}
