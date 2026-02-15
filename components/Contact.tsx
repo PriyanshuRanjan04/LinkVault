@@ -81,7 +81,7 @@ export default function Contact() {
                                 </h3>
                                 <div className="flex gap-3">
                                     <a
-                                        href="https://github.com/yourusername"
+                                        href="https://github.com/PriyanshuRanjan04"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="p-3 bg-zinc-800/80 hover:bg-purple-500/20 border border-zinc-700 hover:border-purple-500/40 rounded-lg transition-all hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20"
@@ -90,7 +90,7 @@ export default function Contact() {
                                         <Github className="w-5 h-5 text-zinc-400 hover:text-purple-400 transition-colors" />
                                     </a>
                                     <a
-                                        href="https://linkedin.com/in/yourusername"
+                                        href="https://www.linkedin.com/in/priyanshu-ranjan-006845247/"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="p-3 bg-zinc-800/80 hover:bg-purple-500/20 border border-zinc-700 hover:border-purple-500/40 rounded-lg transition-all hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20"
@@ -99,7 +99,7 @@ export default function Contact() {
                                         <Linkedin className="w-5 h-5 text-zinc-400 hover:text-purple-400 transition-colors" />
                                     </a>
                                     <a
-                                        href="mailto:your@email.com"
+                                        href="priyanshuranjan11260@gmail.com"
                                         className="p-3 bg-zinc-800/80 hover:bg-purple-500/20 border border-zinc-700 hover:border-purple-500/40 rounded-lg transition-all hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20"
                                         aria-label="Email"
                                     >
